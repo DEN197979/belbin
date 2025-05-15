@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Тест по ролям в команде (по Белбину)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: #f7f7f7;
+    }
+    h1 {
+      text-align: center;
+    }
+    .question {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+    }
+    .answer-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 8px 0;
+    }
+    .answer-row select {
+      margin-left: 10px;
+      padding: 5px;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+      display: block;
+      margin: 20px auto;
+    }
+    .result {
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Тест по ролям в команде (по Белбину)</h1>
+  <form id="belbinTest">
+    <div class="question">
+      <p>1. Что из следующего наиболее точно описывает ваше поведение в группе?</p>
+      <div class="answer-row">
+        <label>Я выдвигаю оригинальные идеи
+          <select name="q1">
+            <option value="plant_0">-</option>
+            <option value="plant_3">Точно про меня</option>
+            <option value="plant_2">Часто про меня</option>
+            <option value="plant_1">Иногда про меня</option>
+          </select>
+        </label>
+      </div>
+      <div class="answer-row">
+        <label>Я умею организовывать других для достижения цели
+          <select name="q1">
+            <option value="coordinator_0">-</option>
+            <option value="coordinator_3">Точно про меня</option>
+            <option value="coordinator_2">Часто про меня</option>
+            <option value="coordinator_1">Иногда про меня</option>
+          </select>
+        </label>
+      </div>
+      <div class="answer-row">
+        <label>Я слежу, чтобы всё было точно и в срок
+          <select name="q1">
+            <option value="completer_0">-</option>
+            <option value="completer_3">Точно про меня</option>
+            <option value="completer_2">Часто про меня</option>
+            <option value="completer_1">Иногда про меня</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <!-- Добавь другие блоки по образцу -->
+
+    <button type="submit">Показать результат</button>
+  </form>
+
+  <div class="result" id="result"></div>
+
+  <script>
+    const roles = {
+      plant: 0,
+      coordinator: 0,
+      completer: 0
+      // Добавь остальные роли по мере необходимости
+    };
+
+    document.getElementById('belbinTest').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      for (let role in roles) {
+        roles[role] = 0;
+      }
+
+      const usedScoresPerQuestion = {};
+      const selects = document.querySelectorAll('select');
+      let isValid = true;
+
+      selects.forEach(select => {
+        const name = select.name;
+        const [role, score] = select.value.split('_');
+        if (!usedScoresPerQuestion[name]) usedScoresPerQuestion[name] = new Set();
+
+        const numericScore = parseInt(score);
+        if (numericScore > 0) {
+          if (usedScoresPerQuestion[name].has(numericScore)) {
+            alert('Вы не можете использовать одинаковое значение более одного раза в одном вопросе.');
+            isValid = false;
+            return;
+          } else {
+            usedScoresPerQuestion[name].add(numericScore);
+          }
+          roles[role] += numericScore;
+        }
+      });
+
+      if (!isValid) return;
+
+      const sortedRoles = Object.entries(roles).sort((a, b) => b[1] - a[1]);
+
+      let output = '<h2>Ваши результаты:</h2>';
+      for (let [role, score] of sortedRoles) {
+        output += `${role}: ${score} баллов<br>`;
+      }
+
+      document.getElementById('result').innerHTML = output;
+    });
+  </script>
+</body>
+</html>
